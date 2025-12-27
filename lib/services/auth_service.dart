@@ -32,12 +32,20 @@ class AuthService {
 
       // Google'dan authentication bilgilerini al
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
+      final accessToken = googleAuth.accessToken;
+
+      if (idToken == null || accessToken == null) {
+        throw Exception(
+          'Google kimlik doğrulama bilgisi alınamadı. Google Sign-In yapılandırmasını kontrol edin.',
+        );
+      }
 
       // Supabase'e Google token'ı ile giriş yap
       final response = await _supabase.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
-        idToken: googleAuth.idToken!,
-        accessToken: googleAuth.accessToken,
+        idToken: idToken,
+        accessToken: accessToken,
       );
 
       if (response.user == null) {
@@ -53,6 +61,8 @@ class AuthService {
       );
 
       return profile;
+    } on AuthException catch (e) {
+      throw Exception(_mapAuthError(e));
     } catch (e) {
       throw Exception('Google ile giriş başarısız: $e');
     }
