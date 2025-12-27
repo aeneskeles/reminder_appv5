@@ -216,10 +216,13 @@ class _AuthScreenState extends State<AuthScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      final email = value?.trim() ?? '';
+                      final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+
+                      if (email.isEmpty) {
                         return 'Lütfen e-posta adresinizi girin';
                       }
-                      if (!value.contains('@')) {
+                      if (!emailRegex.hasMatch(email)) {
                         return 'Geçerli bir e-posta adresi girin';
                       }
                       return null;
