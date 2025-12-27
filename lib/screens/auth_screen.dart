@@ -83,7 +83,20 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (profile != null && mounted) {
         // Başarılı
-        Navigator.of(context).pushReplacementNamed('/home');
+        if (_authService.isLoggedIn) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Kayıt başarıyla oluşturuldu. Lütfen e-posta doğrulama bağlantısını kontrol edin.',
+              ),
+            ),
+          );
+          setState(() {
+            _isLogin = true;
+          });
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -279,4 +292,3 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 }
-
