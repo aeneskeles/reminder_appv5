@@ -75,13 +75,27 @@ class AuthService {
         },
       );
 
-      if (response.user == null) {
+      final authUser = response.user;
+      if (authUser == null) {
         throw Exception('Kayıt başarısız');
+      }
+
+      // Eğer e-posta doğrulaması gerekiyorsa session null döner
+      // Bu durumda RLS hatası almamak için profil kaydını giriş sonrasına bırakalım
+      final hasActiveSession = response.session != null || _supabase.isLoggedIn;
+      if (!hasActiveSession) {
+        return UserProfile(
+          id: authUser.id,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          createdAt: DateTime.tryParse(authUser.createdAt ?? ''),
+        );
       }
 
       // Kullanıcı profilini kaydet
       final profile = await _saveUserProfile(
-        response.user!,
+        authUser,
         firstName: firstName,
         lastName: lastName,
       );
@@ -107,8 +121,20 @@ class AuthService {
         throw Exception('Giriş başarısız');
       }
 
-      // Kullanıcı profilini getir
-      return await _getUserProfile(response.user!.id);
+      // Kullanıcı profilini getir, yoksa oluştur
+      final user = response.user!;
+      final profile = await _getUserProfile(user.id);
+      if (profile != null) {
+        return profile;
+      }
+
+      final metadata = user.userMetadata ?? {};
+      return await _saveUserProfile(
+        user,
+        firstName: metadata['first_name'] as String?,
+        lastName: metadata['last_name'] as String?,
+        avatarUrl: metadata['avatar_url'] as String?,
+      );
     } catch (e) {
       throw Exception('Giriş başarısız: $e');
     }
@@ -160,19 +186,13 @@ class AuthService {
           .from('user_profiles')
           .select()
           .eq('id', userId)
-          .single();
+          .maybeSingle();
 
-      return UserProfile.fromMap(response as Map<String, dynamic>);
-    } catch (e) {
-      // Profil bulunamadıysa, kullanıcı bilgilerinden oluştur
-      final user = currentUser;
-      if (user != null) {
-        return UserProfile(
-          id: user.id,
-          email: user.email ?? '',
-          createdAt: DateTime.tryParse(user.createdAt ?? ''),
-        );
+      if (response != null) {
+        return UserProfile.fromMap(response as Map<String, dynamic>);
       }
+      return null;
+    } catch (e) {
       return null;
     }
   }
@@ -184,4 +204,3 @@ class AuthService {
     return await _getUserProfile(user.id);
   }
 }
-
