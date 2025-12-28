@@ -47,14 +47,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Kategoriye göre filtrele
     if (_selectedCategory != 'Tümü') {
-      filtered = filtered.where((r) => r.category == _selectedCategory).toList();
+      filtered = filtered
+          .where((r) => r.category == _selectedCategory)
+          .toList();
     }
 
     // Arama sorgusuna göre filtrele
     if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((r) =>
-          r.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          r.description.toLowerCase().contains(_searchQuery.toLowerCase())).toList();
+      filtered = filtered
+          .where(
+            (r) =>
+                r.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                r.description.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
+          )
+          .toList();
     }
 
     setState(() {
@@ -86,7 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Hatırlatıcıyı Sil'),
-        content: const Text('Bu hatırlatıcıyı silmek istediğinizden emin misiniz?'),
+        content: const Text(
+          'Bu hatırlatıcıyı silmek istediğinizden emin misiniz?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -107,9 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       _loadReminders();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hatırlatıcı silindi')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Hatırlatıcı silindi')));
       }
     }
   }
@@ -152,7 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text('Çıkış Yap'),
-                  content: const Text('Çıkış yapmak istediğinizden emin misiniz?'),
+                  content: const Text(
+                    'Çıkış yapmak istediğinizden emin misiniz?',
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context, false),
@@ -160,7 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Çıkış Yap', style: TextStyle(color: Colors.red)),
+                      child: const Text(
+                        'Çıkış Yap',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ],
                 ),
@@ -225,7 +240,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(width: 16),
                 // Tamamlananları göster/gizle
                 FilterChip(
-                  label: Text(_showCompleted ? 'Tamamlananları Gizle' : 'Tamamlananları Göster'),
+                  label: Text(
+                    _showCompleted
+                        ? 'Tamamlananları Gizle'
+                        : 'Tamamlananları Göster',
+                  ),
                   selected: _showCompleted,
                   onSelected: (value) {
                     setState(() {
@@ -254,8 +273,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          _reminders.isEmpty ? 'Henüz hatırlatıcı yok' : 'Sonuç bulunamadı',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                          _reminders.isEmpty
+                              ? 'Henüz hatırlatıcı yok'
+                              : 'Sonuç bulunamadı',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -292,14 +316,19 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: _getCategoryColor(reminder.category),
           child: Text(
             reminder.category[0].toUpperCase(),
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         title: Text(
           reminder.title,
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            decoration: reminder.isCompleted ? TextDecoration.lineThrough : null,
+            decoration: reminder.isCompleted
+                ? TextDecoration.lineThrough
+                : null,
           ),
         ),
         subtitle: Column(
@@ -315,7 +344,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text(
                   dateFormat.format(reminder.dateTime),
                   style: TextStyle(
-                    color: isPast && !reminder.isCompleted ? Colors.red : Colors.grey[600],
+                    color: isPast && !reminder.isCompleted
+                        ? Colors.red
+                        : Colors.grey[600],
                     fontSize: 12,
                   ),
                 ),
@@ -333,7 +364,9 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 4),
             Chip(
               label: Text(reminder.category),
-              backgroundColor: _getCategoryColor(reminder.category).withOpacity(0.2),
+              backgroundColor: _getCategoryColor(
+                reminder.category,
+              ).withOpacity(0.2),
               labelStyle: TextStyle(
                 color: _getCategoryColor(reminder.category),
                 fontSize: 11,
@@ -346,7 +379,9 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             IconButton(
               icon: Icon(
-                reminder.isCompleted ? Icons.check_circle : Icons.check_circle_outline,
+                reminder.isCompleted
+                    ? Icons.check_circle
+                    : Icons.check_circle_outline,
                 color: reminder.isCompleted ? Colors.green : Colors.grey,
               ),
               onPressed: () => _toggleCompletion(reminder),
@@ -365,4 +400,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

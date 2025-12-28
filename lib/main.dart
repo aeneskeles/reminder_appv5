@@ -9,15 +9,17 @@ import 'screens/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Supabase'i başlat
   try {
     await SupabaseService.instance.initialize();
   } catch (e) {
     debugPrint('Supabase başlatılamadı: $e');
-    debugPrint('Lütfen lib/services/supabase_service.dart dosyasında Supabase URL ve key bilgilerinizi güncelleyin!');
+    debugPrint(
+      'Lütfen lib/services/supabase_service.dart dosyasında Supabase URL ve key bilgilerinizi güncelleyin!',
+    );
   }
-  
+
   // Bildirim servisini sadece web dışı platformlarda başlat
   if (!kIsWeb) {
     try {
@@ -26,7 +28,7 @@ void main() async {
       debugPrint('Bildirim servisi başlatılamadı: $e');
     }
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = AuthService.instance;
-    
+
     return MaterialApp(
       title: 'Hatırlatıcı',
       debugShowCheckedModeBanner: false,
@@ -45,10 +47,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('tr', 'TR'),
-        Locale('en', 'US'),
-      ],
+      supportedLocales: const [Locale('tr', 'TR'), Locale('en', 'US')],
       locale: const Locale('tr', 'TR'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -63,15 +62,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      routes: {
-        '/home': (context) => const HomeScreen(),
-      },
+      routes: {'/home': (context) => const HomeScreen()},
       home: StreamBuilder(
         stream: authService.authStateChanges,
         builder: (context, snapshot) {
           // Auth state değişikliklerini dinle
           final isLoggedIn = authService.isLoggedIn;
-          
+
           if (isLoggedIn) {
             return const HomeScreen();
           } else {

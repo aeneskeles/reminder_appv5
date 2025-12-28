@@ -18,11 +18,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _createDB,
-    );
+    return await openDatabase(path, version: 1, onCreate: _createDB);
   }
 
   Future<void> _createDB(Database db, int version) async {
@@ -107,11 +103,7 @@ class DatabaseHelper {
 
   Future<int> deleteReminder(int id) async {
     final db = await database;
-    return await db.delete(
-      'reminders',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    return await db.delete('reminders', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<int> toggleCompletion(int id, bool isCompleted) async {
@@ -129,4 +121,3 @@ class DatabaseHelper {
     await db.close();
   }
 }
-

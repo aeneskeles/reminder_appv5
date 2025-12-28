@@ -32,20 +32,12 @@ class AuthService {
 
       // Google'dan authentication bilgilerini al
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
-      final accessToken = googleAuth.accessToken;
-
-      if (idToken == null || accessToken == null) {
-        throw Exception(
-          'Google kimlik doğrulama bilgisi alınamadı. Google Sign-In yapılandırmasını kontrol edin.',
-        );
-      }
 
       // Supabase'e Google token'ı ile giriş yap
       final response = await _supabase.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: accessToken,
+        idToken: googleAuth.idToken!,
+        accessToken: googleAuth.accessToken,
       );
 
       if (response.user == null) {
@@ -61,8 +53,6 @@ class AuthService {
       );
 
       return profile;
-    } on AuthException catch (e) {
-      throw Exception(_mapAuthError(e));
     } catch (e) {
       throw Exception('Google ile giriş başarısız: $e');
     }
@@ -75,11 +65,9 @@ class AuthService {
     String? firstName,
     String? lastName,
   }) async {
-    final normalizedEmail = email.trim().toLowerCase();
-
     try {
       final response = await _supabase.client.auth.signUp(
-        email: normalizedEmail,
+        email: email,
         password: password,
         data: {
           'first_name': firstName,
@@ -98,7 +86,7 @@ class AuthService {
       if (!hasActiveSession) {
         return UserProfile(
           id: authUser.id,
-          email: normalizedEmail,
+          email: email,
           firstName: firstName,
           lastName: lastName,
           createdAt: DateTime.tryParse(authUser.createdAt ?? ''),
@@ -113,8 +101,6 @@ class AuthService {
       );
 
       return profile;
-    } on AuthException catch (e) {
-      throw Exception(_mapAuthError(e));
     } catch (e) {
       throw Exception('Kayıt başarısız: $e');
     }
@@ -125,11 +111,9 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final normalizedEmail = email.trim().toLowerCase();
-
     try {
       final response = await _supabase.client.auth.signInWithPassword(
-        email: normalizedEmail,
+        email: email,
         password: password,
       );
 
@@ -151,8 +135,6 @@ class AuthService {
         lastName: metadata['last_name'] as String?,
         avatarUrl: metadata['avatar_url'] as String?,
       );
-    } on AuthException catch (e) {
-      throw Exception(_mapAuthError(e));
     } catch (e) {
       throw Exception('Giriş başarısız: $e');
     }
@@ -220,18 +202,5 @@ class AuthService {
     final user = currentUser;
     if (user == null) return null;
     return await _getUserProfile(user.id);
-  }
-
-  String _mapAuthError(AuthException exception) {
-    switch (exception.code) {
-      case 'email_address_invalid':
-        return 'Geçerli bir e-posta adresi girin.';
-      case 'email_exists':
-        return 'Bu e-posta ile daha önce kayıt olunmuş.';
-      case 'invalid_credentials':
-        return 'E-posta veya şifre hatalı.';
-      default:
-        return exception.message;
-    }
   }
 }
