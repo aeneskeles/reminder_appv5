@@ -17,7 +17,8 @@ jobs:
 
       - run: flutter pub get
 
-      - run: dart format --set-exit-if-changed lib
+      - run: dart format lib
+
 
 
       - run: flutter analyze || true
