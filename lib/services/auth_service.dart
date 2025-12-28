@@ -30,7 +30,14 @@ class AuthService {
       }
 
       // Google'dan authentication bilgilerini al
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      late final GoogleSignInAuthentication googleAuth;
+      try {
+        googleAuth = await googleUser.authentication;
+      } catch (e) {
+        throw Exception(
+          'Google kimlik bilgileri alınamadı. Google Sign-In yapılandırmasını (SHA-1, Client ID) kontrol edin. Detay: $e',
+        );
+      }
       final idToken = googleAuth.idToken;
       final accessToken = googleAuth.accessToken;
 
@@ -40,7 +47,7 @@ class AuthService {
         );
       }
 
-      final displayNameParts = googleUser.displayName?.trim().split(RegExp(r'\\s+'));
+      final displayNameParts = googleUser.displayName?.trim().split(RegExp(r'\s+'));
       final firstName = (displayNameParts != null && displayNameParts.isNotEmpty)
           ? displayNameParts.first
           : null;
