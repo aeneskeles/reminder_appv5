@@ -7,9 +7,7 @@ import 'supabase_service.dart';
 class AuthService {
   static final AuthService instance = AuthService._init();
   final SupabaseService _supabase = SupabaseService.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   AuthService._init();
 
@@ -17,21 +15,23 @@ class AuthService {
 
   bool get isLoggedIn => _supabase.isLoggedIn;
 
-  Stream<AuthState> get authStateChanges => _supabase.client.auth.onAuthStateChange;
+  Stream<AuthState> get authStateChanges =>
+      _supabase.client.auth.onAuthStateChange;
 
   // Google ile giriş
   Future<UserProfile?> signInWithGoogle() async {
     try {
       // Google Sign-In başlat
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         // Kullanıcı iptal etti
         return null;
       }
 
       // Google'dan authentication bilgilerini al
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       // Supabase'e Google token'ı ile giriş yap
       final response = await _supabase.client.auth.signInWithIdToken(
@@ -69,10 +69,7 @@ class AuthService {
       final response = await _supabase.client.auth.signUp(
         email: email,
         password: password,
-        data: {
-          'first_name': firstName,
-          'last_name': lastName,
-        },
+        data: {'first_name': firstName, 'last_name': lastName},
       );
 
       final authUser = response.user;
