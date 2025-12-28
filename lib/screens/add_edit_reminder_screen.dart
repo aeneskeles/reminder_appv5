@@ -126,7 +126,9 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
         dateTime: _combinedDateTime,
         isRecurring: _isRecurring,
         category: _selectedCategory,
-        recurrencePattern: _isRecurring ? _getRecurrencePatternValue(_recurrencePattern) : null,
+        recurrencePattern: _isRecurring
+            ? _getRecurrencePatternValue(_recurrencePattern)
+            : null,
         isCompleted: widget.reminder?.isCompleted ?? false,
       );
 
@@ -153,7 +155,11 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.reminder == null ? 'Yeni Hatırlatıcı' : 'Hatırlatıcıyı Düzenle'),
+        title: Text(
+          widget.reminder == null
+              ? 'Yeni Hatırlatıcı'
+              : 'Hatırlatıcıyı Düzenle',
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -202,7 +208,9 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.calendar_today),
                   title: const Text('Tarih'),
-                  subtitle: Text(DateFormat('dd MMMM yyyy', 'tr_TR').format(_selectedDate)),
+                  subtitle: Text(
+                    DateFormat('dd MMMM yyyy', 'tr_TR').format(_selectedDate),
+                  ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: _selectDate,
                 ),
@@ -246,7 +254,9 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
               // Tekrar eden
               SwitchListTile(
                 title: const Text('Tekrar Eden Hatırlatıcı'),
-                subtitle: const Text('Bu hatırlatıcı belirli aralıklarla tekrarlansın mı?'),
+                subtitle: const Text(
+                  'Bu hatırlatıcı belirli aralıklarla tekrarlansın mı?',
+                ),
                 value: _isRecurring,
                 onChanged: (value) {
                   setState(() {
@@ -271,10 +281,7 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                     prefixIcon: Icon(Icons.repeat),
                   ),
                   items: _recurrenceOptions.map((option) {
-                    return DropdownMenuItem(
-                      value: option,
-                      child: Text(option),
-                    );
+                    return DropdownMenuItem(value: option, child: Text(option));
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
@@ -295,10 +302,7 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Kaydet',
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: const Text('Kaydet', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
@@ -307,4 +311,3 @@ class _AddEditReminderScreenState extends State<AddEditReminderScreen> {
     );
   }
 }
-

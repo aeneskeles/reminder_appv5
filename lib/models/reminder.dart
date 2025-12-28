@@ -6,7 +6,8 @@ class Reminder {
   final bool isRecurring;
   final String category;
   final bool isCompleted;
-  final String? recurrencePattern; // 'daily', 'weekly', 'monthly', null for one-time
+  final String?
+  recurrencePattern; // 'daily', 'weekly', 'monthly', null for one-time
 
   Reminder({
     this.id,
@@ -67,4 +68,3 @@ class Reminder {
     );
   }
 }
-

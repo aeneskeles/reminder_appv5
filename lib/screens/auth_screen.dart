@@ -15,7 +15,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  
+
   bool _isLogin = true;
   bool _isLoading = false;
   final AuthService _authService = AuthService.instance;
@@ -31,7 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final profile = await _authService.signInWithGoogle();
       if (profile != null && mounted) {
@@ -40,9 +40,9 @@ class _AuthScreenState extends State<AuthScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Giriş başarısız: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Giriş başarısız: $e')));
       }
     } finally {
       if (mounted) {
@@ -101,7 +101,11 @@ class _AuthScreenState extends State<AuthScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(_isLogin ? 'Giriş başarısız: $e' : 'Kayıt başarısız: $e')),
+          SnackBar(
+            content: Text(
+              _isLogin ? 'Giriş başarısız: $e' : 'Kayıt başarısız: $e',
+            ),
+          ),
         );
       }
     } finally {
@@ -131,13 +135,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Başlık
                   Text(
                     _isLogin ? 'Hoş Geldiniz' : 'Kayıt Ol',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
@@ -145,9 +149,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     _isLogin
                         ? 'Devam etmek için giriş yapın'
                         : 'Yeni hesap oluşturun',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
-                        ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
